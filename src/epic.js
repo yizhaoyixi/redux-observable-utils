@@ -164,8 +164,9 @@ export const createRequestEpic = ({ ducks, api, options }: RequestEpicParam) => 
   const requestEpic = (action$: any, store: any) =>
     action$.pipe(
       ofType(requestTypes.REQUEST),
-      mergeMap(action =>
-        from(api(action.params, store)).pipe(
+      mergeMap(action => {
+        console.log(action);
+        return from(api(action.params, store)).pipe(
           map((data) => {
             if (get(action, 'params.resolve') && options.handleParamsPromiseResolve) {
               action.params.resolve(data);
@@ -180,8 +181,8 @@ export const createRequestEpic = ({ ducks, api, options }: RequestEpicParam) => 
             }
             return of(requestActions.failure(error, action.params));
           }),
-        ),
-      ),
+        )
+      }),
     );
 
   let handlerEpics = [];
